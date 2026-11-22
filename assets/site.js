@@ -34,7 +34,7 @@
 
   var footer = document.createElement("footer");
   footer.innerHTML = '價格、時刻與營業資訊皆為估計值，出發前請以各官方網站為準。<br>' +
-    '景點照片來自 Wikimedia Commons 的自由授權作品，非電影畫面，作者與授權見 <a href="credits.html">照片出處</a>。';
+    '景點照片皆來自 Wikimedia Commons 自由授權作品，非電影畫面，作者與授權見 <a href="credits.html">照片出處</a>。';
   document.body.appendChild(footer);
 
   // Fill photo captions from credits.json
@@ -46,18 +46,21 @@
       var k = f.getAttribute("data-img"), info = c[k];
       if (!info) return;
       var cap = document.createElement("figcaption");
-      cap.innerHTML = '照片：' + esc(info.artist) + '／<a href="' + info.page + '" target="_blank" rel="noopener">' + esc(info.license) + '</a>';
+      cap.innerHTML = '照片：' + esc(info.artist) + '／' + link(info.page, info.license);
       f.appendChild(cap);
     });
     if (creditsTable) {
       creditsTable.innerHTML = Object.keys(c).sort().map(function (k) {
         var i = c[k];
         return "<tr><td><img src=\"images/" + i.file + "\" alt=\"\" style=\"width:96px;aspect-ratio:4/3;object-fit:cover;border-radius:6px\" loading=\"lazy\"></td>" +
-          '<td><a href="' + i.page + '" target="_blank" rel="noopener">' + esc(i.title.replace(/^File:/, "")) + "</a></td>" +
+          "<td>" + link(i.page, i.title.replace(/^File:/, "")) + "</td>" +
           "<td>" + esc(i.artist) + "</td><td>" +
           (i.licenseUrl ? '<a href="' + i.licenseUrl + '" target="_blank" rel="noopener">' + esc(i.license) + "</a>" : esc(i.license)) + "</td></tr>";
       }).join("");
     }
   }).catch(function () {});
+  function link(href, text) {
+    return href ? '<a href="' + href + '" target="_blank" rel="noopener">' + esc(text) + "</a>" : esc(text);
+  }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]; }); }
 })();
